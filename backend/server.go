@@ -172,7 +172,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
-
+  "github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 )
@@ -180,6 +180,7 @@ import (
 var API_KEY string
 
 func main() {
+
 	godotenv.Load()
 	API_KEY = os.Getenv("GROQ_API_KEY")
 
@@ -190,6 +191,11 @@ func main() {
 
 	app := fiber.New()
 
+    // Enable CORS for all origins or restrict to your frontend URL
+    app.Use(cors.New(cors.Config{
+        AllowOrigins: "*", // or "https://formgenai.vercel.app"
+        AllowMethods: "GET,POST,PUT,DELETE,OPTIONS",
+    }))
 	// ------------------ CORS ------------------
 	app.Use(func(c *fiber.Ctx) error {
 		c.Set("Access-Control-Allow-Origin", "*")
