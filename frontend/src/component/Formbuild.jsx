@@ -13,9 +13,10 @@ function Formbuild() {
   const { data, error, isFetching, refetch } = useQuery({
     queryKey: ["generateHtml", inputValue],
     queryFn: async () => {
-      const res = await axios.post("http://localhost:8080/generate", {
-        description: inputValue,
-      });
+      const res = await axios.post(
+        "https://formgenai-backend.onrender.com/generate", // <-- Replace with your Render backend
+        { description: inputValue }
+      );
       return res.data; // expects { html: "<form>...</form>" }
     },
     enabled: false, // do not auto-fetch
@@ -35,10 +36,9 @@ function Formbuild() {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    // Trim input
     const trimmed = inputValue.trim();
 
-    // Validate input
+    // Validation
     if (!trimmed) {
       setInputError("Description cannot be empty.");
       return;
@@ -49,7 +49,6 @@ function Formbuild() {
       return;
     }
 
-    // Optionally: simple keyword check (form-related)
     const allowedKeywords = ["form", "input", "contact", "registration"];
     const isValid = allowedKeywords.some((k) =>
       trimmed.toLowerCase().includes(k)
@@ -60,7 +59,7 @@ function Formbuild() {
       return;
     }
 
-    setInputError(""); // clear error
+    setInputError("");
     refetch(); // trigger API call
   };
 
@@ -104,7 +103,7 @@ function Formbuild() {
                 </label>
                 <textarea
                   id="form-description"
-                  rows="6"
+                  rows={6}
                   className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
                   placeholder="e.g., A contact form with name, email, and message fields"
                   value={inputValue}
